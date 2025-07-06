@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "password": "",
+    "is_admin": true,
+    "role": "admin"
+  },
+  {
+    "id": "99",
+    "username": "Backup",
+    "fullname": "Backup Admin",
+    "email": "backup@example.com",
+    "password": "scrypt:32768:8:1$Am6v06kFOzGTkbZ0$792359b53bcc0ad13b9056cc3acc2aa75b783479225d94baed97c80ec433781b96601f1f3d19b1241146762f6f0b1757af276c26cb8021e58e5b8e1c52b95eac",
+    "is_admin": true,
+    "role": "admin"
+  },
+  {
+    "id": "2",
+    "username": "AdmReichl",
+    "fullname": "Lukas Reichl",
+    "email": "ashdkjashd@de",
+    "password": "scrypt:32768:8:1$MkpQPIjPNVlOSDSy$f17f6450ebccbcc053fe9442d2554fbdda82f74573a9c77b2b7ca32f3a5ae8a13a2119038d6a177275ba688e02e6fcfcb9ee3248b41a4d0f778d94acc46fece0",
+    "is_admin": true,
+    "role": "admin"
+  },
+  {
+    "id": "4",
+    "username": "adjsjdka",
+    "fullname": "ajdsajkd",
+    "email": "hasdhajsd@de",
+    "password": "scrypt:32768:8:1$V88ucIydKGaiIw1x$6c1fa1e4270c53d90e4b8ea2a303167d3dcc45bb99ee3f7f129e3b0c53aba082b22b0eda60f5702f840f812b1833627a3518ac8f8a9135ef5e70594323379fb0",
+    "role": "admin"
+  }
+]

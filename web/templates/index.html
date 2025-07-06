@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>Logged in as <strong>{{ current_user.username }}</strong></p>
+<form method="POST" class="row g-3 mb-4">
+  <div class="col-md-5"><input type="text" name="ip" class="form-control" placeholder="IP Address" required></div>
+  <div class="col-md-5"><input type="text" name="community" class="form-control" placeholder="Community String" required></div>
+  <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Discover</button></div>
+</form>
+
+{% if result %}
+  {% if result.error %}
+    <div class="alert alert-danger"><strong>{{ result.error }}</strong><br><pre>{{ result.details or result.stderr or result.raw_output }}</pre></div>
+  {% else %}
+    <div class="text-end mb-3">
+      <form action="/save-device" method="post">
+        <textarea name="device_data" style="display:none">{{ result | tojson | safe }}</textarea>
+        <button type="submit" class="btn btn-outline-light">💾 Save Device</button>
+      </form>
+    </div>
+
+    <ul class="nav nav-tabs mb-3" id="resultTabs" role="tablist">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#device" type="button">Device</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#interfaces" type="button">Interfaces</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vlans" type="button">VLANs</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#arp" type="button">ARP</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#neighbors" type="button">Neighbors</button></li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="device">
+        <table class="table table-dark table-striped">
+          <tr><th>Hostname</th><td>{{ result.device.hostname }}</td></tr>
+          <tr><th>Model</th><td>{{ result.device.model }}</td></tr>
+          <tr><th>Serial</th><td>{{ result.device.serial }}</td></tr>
+          <tr><th>Location</th><td>{{ result.device.location }}</td></tr>
+          <tr><th>Uptime</th><td>{{ result.device.uptime }}</td></tr>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="interfaces">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>Index</th><th>Interface</th><th>Description</th><th>VLAN</th></tr></thead>
+          <tbody>{% for iface in result.interfaces %}
+            <tr><td>{{ iface.index }}</td><td>{{ iface.interface }}</td><td>{{ iface.description }}</td><td>{{ iface.vlan }}</td></tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="vlans">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>VLAN ID</th><th>Name</th></tr></thead>
+          <tbody>{% for vlan in result.vlans %}
+            <tr><td>{{ vlan.vlan_id }}</td><td>{{ vlan.name }}</td></tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="arp">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>IP Address</th><th>MAC Address</th></tr></thead>
+          <tbody>{% for entry in result.arp_table %}
+            <tr><td>{{ entry.ip }}</td><td>{{ entry.mac }}</td></tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="neighbors">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>Local Port Index</th><th>Neighbor Name</th><th>Neighbor Port</th></tr></thead>
+          <tbody>{% for neighbor in result.neighbors %}
+            <tr><td>{{ neighbor.local_port_index }}</td><td>{{ neighbor.neighbor_name }}</td><td>{{ neighbor.neighbor_port }}</td></tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

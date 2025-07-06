@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="my-4">➕ Neuen Benutzer anlegen</h2>
+
+  <form method="post" class="mb-4">
+    <div class="mb-3">
+      <label for="fullname" class="form-label">Voller Name</label>
+      <input type="text" class="form-control" id="fullname" name="fullname" required>
+    </div>
+    <div class="mb-3">
+      <label for="username" class="form-label">Benutzername</label>
+      <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">E-Mail Adresse</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Passwort</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="mb-3">
+        <label for="role" class="form-label">Rolle</label>
+        <select name="role" id="role" class="form-select" required>
+        <option value="admin">Administrator</option>
+        <option value="readonly">Read Only</option>
+        <option value="user" selected>Standard</option>
+    </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Benutzer anlegen</button>
+    <a href="{{ url_for('list_users') }}" class="btn btn-secondary ms-2">Abbrechen</a>
+  </form>
+{% endblock %}

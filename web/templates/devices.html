@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="my-4 text-light">📡 Saved Devices</h2>
+  {% if devices %}
+      <!-- 🔍 Suchleiste -->
+    <form method="GET" class="mb-3">
+      <input type="text" name="query" class="form-control" placeholder="Suche nach Hostname, Modell oder Location..." value="{{ request.args.get('query', '') }}">
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Hostname</th>
+            <th>Model</th>
+            <th>Location</th>
+            <th>Uptime</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dev in devices %}
+            <tr>
+              <td>{{ dev.filename.split('_')[1].split('.')[0] }}</td>
+              <td>{{ dev.hostname }}</td>
+              <td>{{ dev.model }}</td>
+              <td>{{ dev.location }}</td>
+              <td>{{ dev.uptime }}</td>
+              <td>
+                <a href="{{ url_for('device_detail', filename=dev.filename) }}"
+                class="btn btn-sm btn-outline-light me-1">
+                🔍 View
+                </a>
+
+                <form action="{{ url_for('delete_device', filename=dev.filename) }}"
+                      method="post"
+                      class="delete-form d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-light">🗑️ Löschen</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-light">No devices saved yet.</p>
+  {% endif %}
+{% endblock %}

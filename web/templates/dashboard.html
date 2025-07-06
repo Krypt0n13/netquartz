@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – NetQuartz{% endblock %}
+
+{% block content %}
+<div class="container-fluid fade-in">
+  <h2 class="mb-4 text-white">Dashboard</h2>
+  <div class="row gy-4">
+    <!-- Uhrzeit -->
+    <div class="col-md-4">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Aktuelle Uhrzeit</h5>
+          <p class="fs-4">{{ current_time }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Devices -->
+    <div class="col-md-4">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Gespeicherte Devices</h5>
+          <p class="fs-4">{{ num_devices }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Users -->
+    <div class="col-md-4">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Anzahl Benutzer</h5>
+          <p class="fs-4">{{ num_users }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Letzter Discover -->
+    <div class="col-md-6">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Letzter Discover</h5>
+          <p class="fs-4">{{ last_updated or '–' }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Letzter Hostname -->
+    <div class="col-md-6">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Letzter Hostname</h5>
+          <p class="fs-4">{{ last_hostname or '–' }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Changelog -->
+    <div class="col-12">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Changelog</h5>
+          <ul class="list-group list-group-flush">
+            {% if changelog %}
+              {% for entry in changelog %}
+                <li class="list-group-item bg-dark text-white border-secondary">{{ entry }}</li>
+              {% endfor %}
+            {% else %}
+              <li class="list-group-item bg-dark text-white border-secondary">Keine Änderungen vorhanden.</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Chart -->
+    <div class="col-12">
+      <div class="card bg-dark text-white border-secondary">
+        <div class="card-body">
+          <h5 class="card-title">Systemübersicht</h5>
+          <div style="max-width: 600px; margin: 0 auto;">
+            <canvas id="overviewChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-white mt-3">v1.0.0</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('overviewChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Devices','Users'],
+        datasets: [{
+          label: 'Anzahl',
+          data: [{{ num_devices }},{{ num_users }}],
+          backgroundColor: ['rgba(134,117,169,0.8)','rgba(94,84,142,0.8)'],
+          borderColor: ['rgba(134,117,169,1)','rgba(94,84,142,1)'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, ticks: { color:'#fff', stepSize:1 }},
+          x: { ticks:{ color:'#fff' }}
+        },
+        plugins:{ legend:{ display:false }}
+      }
+    });
+  });
+</script>
+{% endblock %}

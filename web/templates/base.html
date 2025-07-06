@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}NetQuartz{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <style>
+    body {
+      background-color: #1e1b2e;
+      color: white;
+    }
+    .sidebar {
+      background-color: #2c2a40;
+      min-height: 100vh;
+      position: relative;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+    .sidebar a:hover {
+      background-color: #444;
+    }
+    .form-control, .form-select, input[type="text"], input[type="password"], input[type="email"], textarea {
+      background-color: #2c2a40;
+      color: white;
+      border: 1px solid #444;
+    }
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .form-control:focus {
+      background-color: #2c2a40;
+      color: white;
+      border-color: #8675a9;
+      box-shadow: 0 0 0 0.25rem rgba(134, 117, 169, 0.25);
+    }
+    .btn-primary {
+      background-color: #5e548e;
+      border-color: #5e548e;
+    }
+    .btn-primary:hover {
+      background-color: #8675a9;
+      border-color: #8675a9;
+    }
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .spinner-border {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-left: 10px;
+    }
+    .version-label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .modal-header,
+    .modal-footer {
+      border: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex">
+    <div class="sidebar p-3 text-center">
+
+      {% if current_user.is_authenticated %}
+        <!-- Logo -->
+        <img src="{{ url_for('static', filename='img/netquartz-logo.png') }}"
+             alt="NetQuartz Logo"
+             class="img-fluid mb-2"
+             style="max-width: 60px;">
+        <h4 class="text-white">NetQuartz</h4>
+
+        <!-- Navigationslinks -->
+        <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+        <a href="{{ url_for('index') }}">🔍 Discover</a>
+        <div class="dropdown fade-in">
+          <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">
+            📦 Collected Data
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="{{ url_for('devices') }}">💾 Devices</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('vlan_list') }}">🧩 VLANs</a></li>
+          </ul>
+        </div>
+
+        <!-- Adminbereich -->
+        {% if current_user.is_admin %}
+          <div class="dropdown fade-in">
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">🛠 Administrator</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('list_users') }}">👥 Benutzerliste</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('create_user') }}">➕ Benutzer anlegen</a></li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="#" onclick="showAdminAlert()" style="color: #ccc;">Administrator</a>
+        {% endif %}
+
+        <!-- Settings -->
+        <div class="dropdown fade-in">
+          <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">
+            <i class="bi bi-gear me-2"></i>Settings
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li>
+              <a class="dropdown-item" href="{{ url_for('change_password') }}">
+                <i class="bi bi-shield-lock me-2"></i>Passwort ändern
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Logout -->
+        <a href="{{ url_for('logout') }}">🚪 Logout</a>
+      {% endif %}
+
+      <div class="version-label">v1.0.0</div>
+    </div>
+
+    <div class="p-4 flex-grow-1">
+      <div id="spinner-container" class="mb-3" style="display: none;">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function showAdminAlert() {
+      const alertBox = document.createElement('div');
+      alertBox.className = 'alert alert-danger fade-in';
+      alertBox.innerText = 'Keine Adminrechte!';
+      document.querySelector('.flex-grow-1').prepend(alertBox);
+      setTimeout(() => alertBox.remove(), 3000);
+    }
+
+    const discoverForm = document.querySelector('form');
+    const spinnerContainer = document.getElementById('spinner-container');
+    if (discoverForm && spinnerContainer) {
+      discoverForm.addEventListener('submit', () => {
+        spinnerContainer.style.display = 'block';
+      });
+    }
+  </script>
+
+  {% block scripts %}{% endblock %}
+
+  <script>
+    // Nur für Benutzerlöschung notwendig
+    function confirmUserDelete(userId) {
+      const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+      const form = document.getElementById('confirmDeleteForm');
+      const input = document.getElementById('deleteUserIdInput');
+      form.action = "{{ url_for('delete_user') }}";
+      input.value = userId;
+      modal.show();
+    }
+  </script>
+
+  <!-- Modal für Benutzer löschen -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white border-secondary">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmLabel">Löschen bestätigen</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schließen"></button>
+        </div>
+        <div class="modal-body">
+          Bist du sicher, dass du dieses Objekt wirklich löschen willst?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+          <form id="confirmDeleteForm" method="post">
+            <input type="hidden" name="user_id" id="deleteUserIdInput">
+            <button type="submit" class="btn btn-danger">Ja, löschen</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

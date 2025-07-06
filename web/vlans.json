@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "default",
+    "hostname": "SW-001.localdomain, SW-002.localdomain"
+  },
+  {
+    "id": "10",
+    "name": "RZ-Server",
+    "hostname": "SW-001.localdomain"
+  },
+  {
+    "id": "1002",
+    "name": "fddi-default",
+    "hostname": "SW-001.localdomain, SW-002.localdomain"
+  },
+  {
+    "id": "1003",
+    "name": "token-ring-default",
+    "hostname": "SW-001.localdomain, SW-002.localdomain"
+  },
+  {
+    "id": "1004",
+    "name": "fddinet-default",
+    "hostname": "SW-001.localdomain, SW-002.localdomain"
+  },
+  {
+    "id": "1005",
+    "name": "trnet-default",
+    "hostname": "SW-001.localdomain, SW-002.localdomain"
+  }
+]

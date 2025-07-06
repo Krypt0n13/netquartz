@@ -1,0 +1,17 @@
+{
+  "hostname": "Switch-192-168-178-106",
+  "vlans": [
+    {
+      "id": 1,
+      "name": "default"
+    },
+    {
+      "id": 10,
+      "name": "Management"
+    },
+    {
+      "id": 20,
+      "name": "VoIP"
+    }
+  ]
+}
